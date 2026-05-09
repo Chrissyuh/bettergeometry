@@ -1,0 +1,7 @@
+services:
+  - type: web
+    runtime: static
+    name: bettergeometry
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    autoDeployTrigger: commit
