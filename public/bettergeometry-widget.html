@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BetterGeometry Widget</title>
+    <style>
+      :root {
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #0f172a;
+        background: transparent;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      body {
+        display: grid;
+        place-items: stretch;
+        padding: 10px;
+      }
+
+      .card {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        max-height: 570px;
+        overflow: hidden;
+        border-radius: 26px;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        background: linear-gradient(135deg, #fbfdff 0%, #ffffff 100%);
+        box-shadow: 0 16px 45px rgba(15, 23, 42, 0.18);
+        padding: clamp(16px, 2.6vw, 22px);
+        display: grid;
+        grid-template-rows: auto auto 1fr;
+        gap: 9px;
+      }
+
+      .version {
+        position: absolute;
+        top: 17px;
+        right: 17px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: #0f172a;
+        color: white;
+        font-weight: 900;
+        font-size: 13px;
+        letter-spacing: 0.02em;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.22);
+      }
+
+      .eyebrow {
+        margin: 0;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 0.28em;
+      }
+
+      h1 {
+        margin: 0;
+        max-width: calc(100% - 95px);
+        font-size: clamp(38px, 7.5vw, 62px);
+        line-height: 0.9;
+        letter-spacing: -0.08em;
+      }
+
+      .subtitle {
+        margin: 0;
+        font-size: clamp(14px, 2.2vw, 17px);
+        color: #334155;
+      }
+
+      .scene-panel {
+        min-height: 285px;
+        border: 1px solid #d9e2ef;
+        border-radius: 23px;
+        background: linear-gradient(135deg, #f8fbff, #ffffff);
+        padding: 10px;
+        overflow: hidden;
+      }
+
+      svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .scene-bg { fill: #fbfdff; }
+      .polygon-fill { fill: rgba(96, 165, 250, 0.18); }
+      .polygon-stroke { fill: none; stroke: rgba(37, 99, 235, 0.48); stroke-width: 2; }
+      .circle-fill { fill: rgba(59, 130, 246, 0.12); }
+      .circle-stroke { fill: none; stroke: rgba(37, 99, 235, 0.42); stroke-width: 2; }
+      .segment { stroke: rgba(37, 99, 235, 0.3); stroke-width: 2; stroke-linecap: round; }
+      .segment.highlight { stroke: rgba(15, 23, 42, 0.58); stroke-width: 2.8; }
+      .point-dot { fill: #0f172a; }
+
+      .point-label,
+      .shape-label,
+      .subtle-label {
+        font-weight: 800;
+        paint-order: stroke;
+        stroke: rgba(255, 255, 255, 0.86);
+        stroke-width: 2.8px;
+        stroke-linejoin: round;
+        fill: #0f172a;
+      }
+
+      .point-label { font-size: 19px; }
+      .shape-label { font-size: 18px; }
+      .shape-label.small { font-size: 16px; fill: #1e3a8a; }
+      .subtle-label { font-size: 13px; fill: #475569; }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <div class="version">V0.1.0.4</div>
+      <p class="eyebrow">BETTERTOOLS</p>
+      <h1>BetterGeometry</h1>
+      <p class="subtitle">Clean generic geometry scenes rendered as SVG inside ChatGPT.</p>
+
+      <section class="scene-panel">
+        <svg viewBox="0 0 720 330" role="img" aria-label="BetterGeometry generic scene renderer demo">
+          <rect x="0" y="0" width="720" height="330" rx="22" class="scene-bg" />
+
+          <polygon points="90,254 418,254 210,72" class="polygon-fill" />
+          <polygon points="90,254 418,254 210,72" class="polygon-stroke" />
+          <line x1="90" y1="254" x2="418" y2="254" class="segment highlight" />
+          <text x="254" y="278" text-anchor="middle" class="subtle-label">base AB</text>
+          <text x="242" y="205" text-anchor="middle" class="shape-label">Triangle ABC</text>
+
+          <circle cx="560" cy="168" r="72" class="circle-fill" />
+          <circle cx="560" cy="168" r="72" class="circle-stroke" />
+          <line x1="560" y1="168" x2="632" y2="168" class="segment" />
+          <text x="560" y="84" text-anchor="middle" class="shape-label small">Circle O</text>
+          <text x="596" y="154" text-anchor="middle" class="subtle-label">radius</text>
+
+          <circle cx="90" cy="254" r="6.5" class="point-dot" />
+          <text x="74" y="276" text-anchor="end" class="point-label">A</text>
+
+          <circle cx="418" cy="254" r="6.5" class="point-dot" />
+          <text x="434" y="276" text-anchor="start" class="point-label">B</text>
+
+          <circle cx="210" cy="72" r="6.5" class="point-dot" />
+          <text x="226" y="60" text-anchor="start" class="point-label">C</text>
+
+          <circle cx="560" cy="168" r="6.5" class="point-dot" />
+          <text x="544" y="190" text-anchor="end" class="point-label">O</text>
+
+          <circle cx="632" cy="168" r="6.5" class="point-dot" />
+          <text x="648" y="190" text-anchor="start" class="point-label">P</text>
+        </svg>
+      </section>
+    </main>
+  </body>
+</html>
