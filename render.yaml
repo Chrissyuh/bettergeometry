@@ -1,0 +1,7 @@
+services:
+  - type: web
+    runtime: node
+    name: bettergeometry
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    autoDeployTrigger: commit
