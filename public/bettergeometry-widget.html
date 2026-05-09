@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BetterGeometry</title>
+    <style>
+      :root {
+        color: #111827;
+        background: #f8fafc;
+        font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body { margin: 0; min-height: 100%; }
+
+      body { padding: 16px; }
+
+      main {
+        min-height: 360px;
+        position: relative;
+        border: 1px solid #e5e7eb;
+        border-radius: 24px;
+        background: radial-gradient(circle at top, #ffffff 0%, #f8fafc 68%);
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+        overflow: hidden;
+      }
+
+      header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 18px 18px 10px;
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        color: #64748b;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.22em;
+      }
+
+      h1 {
+        margin: 0;
+        color: #0f172a;
+        font-size: clamp(2rem, 9vw, 4.25rem);
+        line-height: 0.95;
+        letter-spacing: -0.08em;
+      }
+
+      .subline {
+        margin: 10px 0 0;
+        max-width: 34rem;
+        color: #475569;
+        font-size: 0.96rem;
+        line-height: 1.45;
+      }
+
+      .version-badge {
+        flex: 0 0 auto;
+        padding: 0.42rem 0.68rem;
+        border-radius: 999px;
+        background: #111827;
+        color: white;
+        font-size: 0.8rem;
+        font-weight: 800;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.22);
+      }
+
+      .scene-wrap {
+        padding: 8px 18px 18px;
+      }
+
+      svg {
+        display: block;
+        width: 100%;
+        min-height: 260px;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        background: linear-gradient(135deg, rgba(241,245,249,.75), rgba(255,255,255,.95));
+      }
+
+      .shape {
+        fill: rgba(147, 197, 253, 0.18);
+        stroke: #334155;
+        stroke-width: 0.045;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        vector-effect: non-scaling-stroke;
+      }
+
+      .shape.highlight {
+        stroke: #2563eb;
+        stroke-width: 0.085;
+      }
+
+      .point {
+        fill: #0f172a;
+        stroke: white;
+        stroke-width: 0.035;
+        vector-effect: non-scaling-stroke;
+      }
+
+      text {
+        fill: #0f172a;
+        paint-order: stroke;
+        stroke: rgba(255,255,255,.95);
+        stroke-width: 0.12;
+        font-size: 0.28px;
+        font-weight: 800;
+        dominant-baseline: middle;
+        text-anchor: middle;
+        pointer-events: none;
+        user-select: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <section>
+          <p class="eyebrow">BETTERTOOLS</p>
+          <h1>BetterGeometry</h1>
+          <p class="subline">Generic scene JSON is now rendering as SVG inside ChatGPT.</p>
+        </section>
+        <div class="version-badge">V0.1.0.1</div>
+      </header>
+
+      <section class="scene-wrap">
+        <svg id="scene" role="img" aria-label="BetterGeometry generic SVG scene"></svg>
+      </section>
+    </main>
+
+    <script>
+      const scene = {
+        schema: "bettergeometry.scene",
+        version: "0.1",
+        objects: [
+          { type: "point", id: "A", x: 0, y: 0, label: "A" },
+          { type: "point", id: "B", x: 5, y: 0, label: "B" },
+          { type: "point", id: "C", x: 4, y: 3.25, label: "C" },
+          { type: "point", id: "D", x: 0.75, y: 4, label: "D" },
+          { type: "point", id: "O", x: 2.5, y: 1.8, label: "O" },
+          { type: "polygon", id: "ABCD", points: ["A", "B", "C", "D"], label: "polygon" },
+          { type: "segment", id: "AC", from: "A", to: "C", label: "AC" },
+          { type: "circle", id: "circleO", center: "O", radius: 1.05, label: "circle" }
+        ],
+        annotations: [
+          { type: "highlight", id: "h1", targetId: "AC", emphasis: "primary" },
+          { type: "label", id: "l1", targetId: "circleO", text: "Circle centered at O" }
+        ],
+        viewport: { padding: 1.15 }
+      };
+
+      const svg = document.getElementById("scene");
+      const points = new Map(scene.objects.filter(o => o.type === "point").map(p => [p.id, p]));
+      const annotations = new Map();
+      for (const a of scene.annotations || []) annotations.set(a.targetId, [...(annotations.get(a.targetId) || []), a]);
+
+      const y = (value) => -value;
+      const highlighted = (id) => (annotations.get(id) || []).some(a => a.type === "highlight");
+      const labelFor = (object) => (annotations.get(object.id) || []).find(a => a.type === "label")?.text || object.label;
+      const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+      const radiusFor = (circle) => circle.radius ?? dist(points.get(circle.center), points.get(circle.through));
+      const midpoint = (a, b) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
+      const centroid = (list) => ({ x: list.reduce((s, p) => s + p.x, 0) / list.length, y: list.reduce((s, p) => s + p.y, 0) / list.length });
+
+      const bounds = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
+      const include = (x, yy) => { bounds.minX = Math.min(bounds.minX, x); bounds.minY = Math.min(bounds.minY, yy); bounds.maxX = Math.max(bounds.maxX, x); bounds.maxY = Math.max(bounds.maxY, yy); };
+      for (const p of points.values()) include(p.x, p.y);
+      for (const object of scene.objects) {
+        if (object.type !== "circle") continue;
+        const center = points.get(object.center);
+        const r = radiusFor(object);
+        include(center.x - r, center.y - r);
+        include(center.x + r, center.y + r);
+      }
+      const pad = scene.viewport?.padding ?? 1;
+      bounds.minX -= pad; bounds.minY -= pad; bounds.maxX += pad; bounds.maxY += pad;
+      svg.setAttribute("viewBox", `${bounds.minX} ${-bounds.maxY} ${bounds.maxX - bounds.minX} ${bounds.maxY - bounds.minY}`);
+
+      const ns = "http://www.w3.org/2000/svg";
+      const make = (tag, attrs = {}) => {
+        const el = document.createElementNS(ns, tag);
+        for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, String(v));
+        svg.appendChild(el);
+        return el;
+      };
+
+      for (const object of scene.objects) {
+        if (object.type === "polygon") {
+          const pts = object.points.map(id => points.get(id)).filter(Boolean);
+          make("polygon", { class: `shape ${highlighted(object.id) ? "highlight" : ""}`, points: pts.map(p => `${p.x},${y(p.y)}`).join(" ") });
+        }
+        if (object.type === "segment") {
+          const a = points.get(object.from), b = points.get(object.to);
+          make("line", { class: `shape ${highlighted(object.id) ? "highlight" : ""}`, x1: a.x, y1: y(a.y), x2: b.x, y2: y(b.y) });
+        }
+        if (object.type === "circle") {
+          const c = points.get(object.center);
+          make("circle", { class: `shape ${highlighted(object.id) ? "highlight" : ""}`, cx: c.x, cy: y(c.y), r: radiusFor(object) });
+        }
+      }
+
+      for (const p of points.values()) make("circle", { class: "point", cx: p.x, cy: y(p.y), r: 0.085 });
+
+      const addLabel = (x, yy, text) => make("text", { x, y: yy }).textContent = text;
+      for (const object of scene.objects) {
+        const label = labelFor(object);
+        if (!label) continue;
+        if (object.type === "point") addLabel(object.x + 0.18, y(object.y) - 0.18, label);
+        if (object.type === "segment") {
+          const m = midpoint(points.get(object.from), points.get(object.to));
+          addLabel(m.x + 0.12, y(m.y) - 0.12, label);
+        }
+        if (object.type === "polygon") {
+          const c = centroid(object.points.map(id => points.get(id)).filter(Boolean));
+          addLabel(c.x, y(c.y), label);
+        }
+        if (object.type === "circle") {
+          const c = points.get(object.center);
+          addLabel(c.x, y(c.y + radiusFor(object) + 0.18), label);
+        }
+      }
+    </script>
+  </body>
+</html>
