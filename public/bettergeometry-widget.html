@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BetterGeometry</title>
+    <style>
+      :root {
+        color: #111827;
+        background: #f8fafc;
+        font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+      }
+
+      body {
+        padding: 18px;
+      }
+
+      main {
+        min-height: 280px;
+        display: grid;
+        place-items: center;
+        position: relative;
+        border: 1px solid #e5e7eb;
+        border-radius: 24px;
+        background: radial-gradient(circle at top, #ffffff 0%, #f8fafc 65%);
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+        overflow: hidden;
+      }
+
+      .hero {
+        text-align: center;
+        padding: 40px 20px;
+      }
+
+      .eyebrow {
+        margin: 0 0 12px;
+        color: #64748b;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.22em;
+      }
+
+      h1 {
+        margin: 0;
+        color: #0f172a;
+        font-size: clamp(2.4rem, 12vw, 5.5rem);
+        line-height: 0.95;
+        letter-spacing: -0.08em;
+      }
+
+      .subline {
+        margin: 16px auto 0;
+        max-width: 32rem;
+        color: #475569;
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+
+      .version-badge {
+        position: absolute;
+        right: 14px;
+        bottom: 14px;
+        padding: 0.42rem 0.68rem;
+        border-radius: 999px;
+        background: #111827;
+        color: white;
+        font-size: 0.8rem;
+        font-weight: 800;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.22);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <p class="eyebrow">BETTERTOOLS</p>
+        <h1>BetterGeometry</h1>
+        <p class="subline">ChatGPT app test harness is connected. Geometry rendering comes next.</p>
+      </section>
+      <div class="version-badge">V0.0.1.2</div>
+    </main>
+  </body>
+</html>
